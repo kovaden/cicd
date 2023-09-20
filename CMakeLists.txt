@@ -7,13 +7,20 @@ project(helloworld VERSION ${PROJECT_VESRION})
 
 find_package(Boost COMPONENTS unit_test_framework REQUIRED)
 
+# We do not want gtest files to appear in target debian package
+set(INSTALL_GTEST OFF)
+
 include(FetchContent)
+
 FetchContent_Declare(
         googletest
         GIT_REPOSITORY https://github.com/google/googletest.git
         GIT_TAG        release-1.12.1
 )
+
 FetchContent_MakeAvailable(googletest)
+
+
 add_library(GTest::GTest INTERFACE IMPORTED)
 target_link_libraries(GTest::GTest INTERFACE gtest_main)
 
@@ -86,10 +93,13 @@ set(CPACK_PACKAGE_VERSION_MAJOR "${PROJECT_VERSION_MAJOR}")
 set(CPACK_PACKAGE_VERSION_MINOR "${PROJECT_VERSION_MINOR}")
 set(CPACK_PACKAGE_VERSION_PATCH "${PROJECT_VERSION_PATCH}")
 
-set(CPACK_PACKAGE_CONTACT example@example.com)
+set(CPACK_PACKAGE_CONTACT kovalevdenis@gmail.com)
+
+set(CPACK_DEBIAN_PACKAGE_DEPENDS "glibc (>= 2.34)")
 
 include(CPack)
 
 enable_testing()
 
 add_test(test_version test_version)
+add_test(gtest_version gtest_version)
