@@ -95,7 +95,7 @@ set(CPACK_PACKAGE_VERSION_PATCH "${PROJECT_VERSION_PATCH}")
 
 set(CPACK_PACKAGE_CONTACT kovalevdenis@gmail.com)
 
-set(CPACK_DEBIAN_PACKAGE_DEPENDS "glibc (>= 2.34)")
+# set(CPACK_DEBIAN_PACKAGE_DEPENDS "libc6 (>= 2.31)")
 
 include(CPack)
 
