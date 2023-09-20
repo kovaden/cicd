@@ -47,7 +47,7 @@ target_link_libraries(helloworld_cli PRIVATE
     helloworld
 )
 
-target_link_options(helloworld_cli PRIVATE -static-libgcc -static-libstdc++)
+# target_link_options(helloworld_cli PRIVATE -static-libgcc -static-libstdc++)
 
 target_link_libraries(test_version
     ${Boost_LIBRARIES}
