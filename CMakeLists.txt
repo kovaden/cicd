@@ -1,17 +1,28 @@
 cmake_minimum_required(VERSION 3.10)
 
-set(PATCH_VERSION "2" CACHE INTERNAL "Patch version")
+set(PATCH_VERSION "1" CACHE INTERNAL "Patch version")
 set(PROJECT_VESRION 0.0.${PATCH_VERSION})
 
 project(helloworld VERSION ${PROJECT_VESRION})
 
 find_package(Boost COMPONENTS unit_test_framework REQUIRED)
 
+include(FetchContent)
+FetchContent_Declare(
+        googletest
+        GIT_REPOSITORY https://github.com/google/googletest.git
+        GIT_TAG        release-1.12.1
+)
+FetchContent_MakeAvailable(googletest)
+add_library(GTest::GTest INTERFACE IMPORTED)
+target_link_libraries(GTest::GTest INTERFACE gtest_main)
+
 configure_file(version.h.in version.h)
 
 add_executable(helloworld_cli main.cpp)
 add_library(helloworld lib.cpp)
 add_executable(test_version test_version.cpp)
+add_executable(gtest_version gtest_version.cpp)
 
 set_target_properties(helloworld_cli helloworld test_version PROPERTIES
     CXX_STANDARD 14
@@ -28,10 +39,18 @@ set_target_properties(test_version PROPERTIES
 target_link_libraries(helloworld_cli PRIVATE
     helloworld
 )
+
 target_link_libraries(test_version
     ${Boost_LIBRARIES}
     helloworld
 )
+
+target_link_libraries(gtest_version
+        PRIVATE
+        GTest::GTest
+        helloworld
+)
+
 
 if (MSVC)
     target_compile_options(helloworld_cli PRIVATE
