@@ -36,8 +36,8 @@ jobs:
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          #publish_dir: ./docs/html   
-          destination_dir: ./docs/html
+          publish_dir: ./docs/html   
+          destination_dir: .
           force_orphan: true
           publish_branch: gh-pages
           enable_jekyll: true
