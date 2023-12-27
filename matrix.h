@@ -119,7 +119,7 @@ public:
         return iterator{it};
     }
 
-    T get(key_t &idx) {
+    T get(const key_t &idx) {
         auto f = _busy_cells.find(idx);
         if (f == _busy_cells.end()) {
             return default_value;
@@ -128,7 +128,7 @@ public:
         }
     }
 
-    void set(key_t idx, T val) {
+    void set(const key_t &idx, T val) {
         auto f = _busy_cells.find(idx);
         if (f == _busy_cells.end()) {
             if (val != default_value) {
