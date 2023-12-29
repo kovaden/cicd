@@ -4,9 +4,9 @@
 
 #include <boost/test/unit_test.hpp>
 
-#include "bayan/BayanFile.h"
-#include "bayan/FileOpener.h"
-#include "bayan/ProgramOptions.h"
+#include "bayanlib/BayanFile.h"
+#include "bayanlib/FileOpener.h"
+#include "bayanlib/ProgramOptions.h"
 
 BOOST_AUTO_TEST_SUITE(test_bayan)
 
