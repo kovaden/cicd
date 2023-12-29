@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.10)
 set(PATCH_VERSION "1" CACHE INTERNAL "Patch version")
 set(PROJECT_VESRION 0.0.${PATCH_VERSION})
 
-project(helloworld VERSION ${PROJECT_VESRION})
+project(bayan VERSION ${PROJECT_VESRION})
 
 find_package(Boost COMPONENTS program_options filesystem regex unit_test_framework REQUIRED)
 
@@ -14,35 +14,35 @@ set(CMAKE_CXX_STANDARD 17)
 configure_file(version.h.in version.h)
 
 add_executable(bayan main.cpp
-        bayan/BayanFile.cpp
-        bayan/BayanFile.h
-        bayan/MatchGroup.cpp
-        bayan/MatchGroup.h
-        bayan/BayanSearcher.cpp
-        bayan/BayanSearcher.h
-        bayan/FileHash.cpp
-        bayan/FileHash.h
-        bayan/HashFactory.cpp
-        bayan/HashFactory.h
-        bayan/md5hash.cpp
-        bayan/md5hash.h
-        bayan/IFile.h
-        bayan/FileOpener.h
-        bayan/ProgramOptions.cpp
-        bayan/ProgramOptions.h
+        bayanlib/BayanFile.cpp
+        bayanlib/BayanFile.h
+        bayanlib/MatchGroup.cpp
+        bayanlib/MatchGroup.h
+        bayanlib/BayanSearcher.cpp
+        bayanlib/BayanSearcher.h
+        bayanlib/FileHash.cpp
+        bayanlib/FileHash.h
+        bayanlib/HashFactory.cpp
+        bayanlib/HashFactory.h
+        bayanlib/md5hash.cpp
+        bayanlib/md5hash.h
+        bayanlib/IFile.h
+        bayanlib/FileOpener.h
+        bayanlib/ProgramOptions.cpp
+        bayanlib/ProgramOptions.h
 )
 
 add_executable(test_bayan test_bayan.cpp
-        bayan/BayanFile.cpp
-        bayan/BayanFile.h
-        bayan/FileHash.cpp
-        bayan/FileHash.h
-        bayan/HashFactory.cpp
-        bayan/HashFactory.h
-        bayan/md5hash.cpp
-        bayan/md5hash.h
-        bayan/ProgramOptions.cpp
-        bayan/ProgramOptions.h)
+        bayanlib/BayanFile.cpp
+        bayanlib/BayanFile.h
+        bayanlib/FileHash.cpp
+        bayanlib/FileHash.h
+        bayanlib/HashFactory.cpp
+        bayanlib/HashFactory.h
+        bayanlib/md5hash.cpp
+        bayanlib/md5hash.h
+        bayanlib/ProgramOptions.cpp
+        bayanlib/ProgramOptions.h)
 
 target_link_libraries(bayan
         ${Boost_LIBRARIES}

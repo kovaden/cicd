@@ -3,8 +3,8 @@
 
 #include <boost/program_options.hpp>
 
-#include "bayan/BayanSearcher.h"
-#include "bayan/ProgramOptions.h"
+#include "bayanlib/BayanSearcher.h"
+#include "bayanlib/ProgramOptions.h"
 
 namespace po = boost::program_options;
 
