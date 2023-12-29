@@ -5,86 +5,70 @@ set(PROJECT_VESRION 0.0.${PATCH_VERSION})
 
 project(helloworld VERSION ${PROJECT_VESRION})
 
-find_package(Boost COMPONENTS unit_test_framework REQUIRED)
+find_package(Boost COMPONENTS program_options filesystem regex unit_test_framework REQUIRED)
 
-# We do not want gtest files to appear in target debian package
-set(INSTALL_GTEST OFF)
+include_directories(${Boost_INCLUDE_DIR})
 
-include(FetchContent)
-
-FetchContent_Declare(
-        googletest
-        GIT_REPOSITORY https://github.com/google/googletest.git
-        GIT_TAG        release-1.12.1
-)
-
-FetchContent_MakeAvailable(googletest)
-
-
-add_library(GTest::GTest INTERFACE IMPORTED)
-target_link_libraries(GTest::GTest INTERFACE gtest_main)
+set(CMAKE_CXX_STANDARD 17)
 
 configure_file(version.h.in version.h)
 
-add_executable(helloworld_cli main.cpp)
-add_library(helloworld lib.cpp)
-add_executable(test_version test_version.cpp)
-add_executable(gtest_version gtest_version.cpp)
-
-set_target_properties(helloworld_cli helloworld test_version PROPERTIES
-    CXX_STANDARD 14
-    CXX_STANDARD_REQUIRED ON
-)
-target_include_directories(helloworld
-    PRIVATE "${CMAKE_BINARY_DIR}"
-)
-set_target_properties(test_version PROPERTIES
-    COMPILE_DEFINITIONS BOOST_TEST_DYN_LINK
-    INCLUDE_DIRECTORIES ${Boost_INCLUDE_DIR}
-)
-
-target_link_libraries(helloworld_cli PRIVATE
-    helloworld
+add_executable(bayan main.cpp
+        bayan/BayanFile.cpp
+        bayan/BayanFile.h
+        bayan/MatchGroup.cpp
+        bayan/MatchGroup.h
+        bayan/BayanSearcher.cpp
+        bayan/BayanSearcher.h
+        bayan/FileHash.cpp
+        bayan/FileHash.h
+        bayan/HashFactory.cpp
+        bayan/HashFactory.h
+        bayan/md5hash.cpp
+        bayan/md5hash.h
+        bayan/IFile.h
+        bayan/FileOpener.h
+        bayan/ProgramOptions.cpp
+        bayan/ProgramOptions.h
 )
 
-# target_link_options(helloworld_cli PRIVATE -static-libgcc -static-libstdc++)
+add_executable(test_bayan test_bayan.cpp
+        bayan/BayanFile.cpp
+        bayan/BayanFile.h
+        bayan/FileHash.cpp
+        bayan/FileHash.h
+        bayan/HashFactory.cpp
+        bayan/HashFactory.h
+        bayan/md5hash.cpp
+        bayan/md5hash.h
+        bayan/ProgramOptions.cpp
+        bayan/ProgramOptions.h)
 
-target_link_libraries(test_version
+target_link_libraries(bayan
+        ${Boost_LIBRARIES}
+)
+
+target_link_libraries(test_bayan
     ${Boost_LIBRARIES}
-    helloworld
 )
-
-target_link_libraries(gtest_version
-        PRIVATE
-        GTest::GTest
-        helloworld
-)
-
 
 if (MSVC)
-    target_compile_options(helloworld_cli PRIVATE
+    target_compile_options(bayan PRIVATE
         /W4
     )
-    target_compile_options(helloworld PRIVATE
-        /W4
-    )
-    target_compile_options(test_version PRIVATE
+    target_compile_options(test_bayan PRIVATE
         /W4
     )
 else ()
-    target_compile_options(helloworld_cli PRIVATE
+    target_compile_options(bayan PRIVATE
         -Wall -Wextra -pedantic -Werror
     )
-    target_compile_options(helloworld PRIVATE
-        -Wall -Wextra -pedantic -Werror
-    )
-    target_compile_options(test_version PRIVATE
+    target_compile_options(test_bayan PRIVATE
         -Wall -Wextra -pedantic -Werror
     )
 endif()
 
-
-install(TARGETS helloworld_cli RUNTIME DESTINATION bin)
+install(TARGETS bayan RUNTIME DESTINATION bin)
 
 set(CPACK_GENERATOR DEB)
 
@@ -100,5 +84,4 @@ include(CPack)
 
 enable_testing()
 
-add_test(test_version test_version)
-add_test(gtest_version gtest_version)
+add_test(test_bayan test_bayan)
