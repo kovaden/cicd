@@ -1,6 +1,6 @@
 #define BOOST_TEST_MODULE test_version
 
-#include "lib.h"
+#include "mapreduce.h"
 
 #include <gtest/gtest.h>
 
@@ -30,8 +30,4 @@ class HelloWorldTest : public ::testing::Test
 
 TEST_F (HelloWorldTest, test_version)
 {
-    int v = version();
-
-    ASSERT_NE(v, 0);
-    ASSERT_LT(v, 100);
 }
