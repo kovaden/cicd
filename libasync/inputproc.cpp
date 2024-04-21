@@ -5,7 +5,7 @@
 #include "inputproc.h"
 #include "command.h"
 
-void InputProcessor::process(const std::string &cmd_str)
+void CommandProcessor::process(const std::string &cmd_str)
 {
     if (cmd_str == "{") {
         level++;
@@ -25,5 +25,12 @@ void InputProcessor::process(const std::string &cmd_str)
         if (level == 0 && nelem >= block_size) {
             send_block();
         }
+    }
+}
+
+void CommandProcessor::send_block() {
+    if (current_block->size() > 0) {
+        _executor.add_batch(std::move(current_block));
+        current_block = std::unique_ptr<ICommandBatch>(_batch_creator.create());
     }
 }

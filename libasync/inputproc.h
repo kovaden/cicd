@@ -9,18 +9,18 @@
 #include <memory>
 #include "icommand.h"
 
-class InputProcessor
+class CommandProcessor
 {
 public:
-    InputProcessor(int N, ICommandExecutor &exec, ICommandBatchCreator &batch_creator) :
+    CommandProcessor(int N, ICommandBatchCreator &batch_creator, ICommandExecutor &executor) :
         block_size(N),
-        _exec(exec),
-        _batch_creator(batch_creator)
+        _batch_creator(batch_creator),
+        _executor(executor)
     {
         current_block = std::unique_ptr<ICommandBatch>(_batch_creator.create());
     }
 
-    ~InputProcessor() {
+    ~CommandProcessor() {
         close();
     }
 
@@ -34,17 +34,12 @@ public:
 private:
     int level{0};
     size_t block_size;
-    ICommandExecutor &_exec;
     ICommandBatchCreator &_batch_creator;
+    ICommandExecutor &_executor;
 
     std::unique_ptr<ICommandBatch> current_block;
 
-    void send_block() {
-        if (current_block->size() > 0) {
-            _exec.add_block(std::move(current_block));
-            current_block = std::unique_ptr<ICommandBatch>(_batch_creator.create());
-        }
-    }
+    void send_block();
 };
 
 #endif //BULK_INPUTPROC_H

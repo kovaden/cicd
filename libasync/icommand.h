@@ -14,12 +14,13 @@ using BulkTime = time_t;
 class ICommandBatch
 {
 public:
-
-    virtual void execute(IOutHandlerManager &out_handlers) = 0;
+    virtual void execute(IOutHandler &out_handler) = 0;
     virtual BulkTime start_time() const = 0;
+    virtual bool is_stop() const = 0;
 
     virtual size_t size() const = 0;
     virtual size_t add_command(Command &&cmd) = 0;
+
     virtual ~ICommandBatch() = default;
 };
 
@@ -33,8 +34,8 @@ public:
 class ICommandExecutor
 {
 public:
-    virtual void add_block(std::unique_ptr<ICommandBatch> &&block) = 0;
-    virtual void execute(std::unique_ptr<ICommandBatch> &&batch) = 0;
+    virtual void add_batch(std::unique_ptr<ICommandBatch> block) = 0;
+    virtual void add_handler(std::shared_ptr<IOutHandler> handler) = 0;
 
     virtual ~ICommandExecutor() = default;
 };

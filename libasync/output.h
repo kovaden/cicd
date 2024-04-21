@@ -17,6 +17,7 @@ public:
     IOutHandler(IOutHandler &) = delete;
     IOutHandler(IOutHandler &&) = delete;
 
+    virtual void put(std::shared_ptr<ICommandBatch> batch) = 0;
     virtual void log_batch(const ICommandBatch &, bool is_batch_end) = 0;
     virtual void log_command(const Command &) = 0;
 
@@ -26,9 +27,11 @@ public:
 class IOutHandlerManager
 {
 public:
-    virtual void add_handler(std::shared_ptr<IOutHandler>) = 0;
-    virtual void log_batch(const ICommandBatch &, bool is_batch_end) = 0;
-    virtual void log_command(const Command &) = 0;
+    virtual void add_handler(std::shared_ptr<IOutHandler> ) = 0;
+
+    virtual void put(std::unique_ptr<ICommandBatch> ) = 0;
+
+    virtual ~IOutHandlerManager() =default;
 };
 
 
