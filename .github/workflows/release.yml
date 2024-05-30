@@ -1,9 +1,10 @@
-name: 'C++ CI'
+name: 'C++ CI bulk_server'
 
 on:
   push:
     branches:
       - main
+      - 10-network
       - feature/github_actions
   workflow_dispatch:
 
