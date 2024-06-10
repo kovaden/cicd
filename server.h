@@ -4,12 +4,10 @@
 #include <cstdint>
 #include <iostream>
 #include <boost/asio.hpp>
-#include "async.h"
 
 struct server_params
 {
 	int port;
-	std::size_t bulk_size;
 };
 
 class server

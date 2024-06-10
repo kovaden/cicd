@@ -2,8 +2,9 @@
   
 */
 
-#include "async.h"
 #include "server.h"
+#include "executor.h"
+#include "command.h"
 
 #include <boost/asio.hpp>
 #include <cstddef>
@@ -22,15 +23,11 @@ class session : public std::enable_shared_from_this<session>
 
 		virtual ~session()
 		{
-			if (h != nullptr)
-				async::disconnect(h);
-
 			std::cout << "Session destroyed" << std::endl;
 		}
 
 		void run()
 		{
-			h = async::connect(server_params_.bulk_size);
 			do_read();
 		}
 
@@ -40,7 +37,8 @@ class session : public std::enable_shared_from_this<session>
 		boost::asio::streambuf buffer_;
 
 		const server_params &server_params_;
-		async::context_t h{nullptr};
+
+		Executor executor;
 };
 
 void server::do_accept()
@@ -71,18 +69,20 @@ void session::do_read()
 	// and now call the lambda once data arrives
 	// we read a string until the null termination character	
 
-	boost::asio::async_read_until(socket_, buffer_, "\0",
+	boost::asio::async_read_until(socket_, buffer_, "\n",
 		[this, self](boost::system::error_code ec, std::size_t length)
 		{
 			(void)length;
 			if (!ec)
 			{
-				std::string data{
-					std::istreambuf_iterator<char>(&buffer_),
-					std::istreambuf_iterator<char>()
-				};
-				std::cout << "Received: " << data << std::endl;
-				async::receive(h, data.c_str(), data.size());
+				std::istream is(&buffer_);
+				std::string command_line;
+				std::getline(is, command_line);				
+
+				std::cout << "Received: " << command_line << std::endl;
+					auto result = executor.perform(command_line);
+
+					boost::asio::write(socket_, boost::asio::buffer(result.toString()));
 				do_read();
 			} else {
 				std::cout << "Error: " << ec.message() << std::endl;

@@ -19,8 +19,7 @@ int main(int argc, char *argv[])
 
     po::options_description desc("Allowed options");
     desc.add_options() 
-        ("port", po::value<int>(&params.port)->default_value(9000), "port to start server on")
-        ("bulk_size", po::value<size_t>(&params.bulk_size)->default_value(3),  "Bulk size for commands processing");
+        ("port", po::value<int>(&params.port)->default_value(9000), "port to start server on");
 
     po::variables_map vm;
     po::store(po::command_line_parser(argc, argv).options(desc).positional(p).run(), vm);
