@@ -1,37 +1,67 @@
-#include "server.h"
+#include <tuple>
+#include <string>
+#include <iostream>
+#include <fstream>
+#include <algorithm>
 
-/* 
-use boost::program_options to parse command line. It seems to be an overhead for the simple 2 values,
-but this project is educational, so it good to learn how to use it.
- */
-#include <boost/program_options.hpp>
+#include "logistic_predictor.h"
+#include "helpers.h"
 
-namespace po = boost::program_options;
+using namespace std;
+
+tuple<string, string> parse_args(int argc, char *argv[])
+{
+    if (argc != 3) {
+        cout << "Usage: ./fashio_mnist test.csv model" << endl;
+        exit(1);
+    }
+
+    return {argv[1], argv[2]};
+}
 
 
 int main(int argc, char *argv[]) 
 {
-    server_params params;
+    auto [test_data_file, model] = parse_args(argc, argv);
 
-    po::positional_options_description p;
+    ifstream test_data_str{test_data_file};
+    ifstream model_str{model};
 
-    p.add("port", 1).add("bulk_size", 1);
+    vector<LogisticPredictor> predictors;    
 
-    po::options_description desc("Allowed options");
-    desc.add_options() 
-        ("port", po::value<int>(&params.port)->default_value(9000), "port to start server on");
+    FeatureReader fr(model_str);
 
-    po::variables_map vm;
-    po::store(po::command_line_parser(argc, argv).options(desc).positional(p).run(), vm);
-    po::notify(vm);
+    while (!fr.is_eof())
+    {
+        predictors.emplace_back(fr.read());
+    }
 
+    TestData test_data;
 
-    // std::size_t bulk = vm["bulk_size"].as<std::size_t>();
-    // int port = vm["port"].as<int>();
+    int match = 0;
+    int count = 0;
 
-    boost::asio::io_context io_context;
-    server s(io_context, params);
-    io_context.run();
+    while (read_test_data(test_data_str, test_data)) {
+
+        std::vector<double> options;
+        for (auto &predictor : predictors) {
+            double p = predictor.predict(test_data.feat);
+            options.push_back(p);
+        }
+
+        auto it = max_element(options.begin(), options.end());
+
+        int y_pred = distance(options.begin(), it);
+
+        // cout << "Pred: " << y_pred << " Expected: " << test_data.class_id << "\n";
+
+        if (y_pred == test_data.class_id) {
+            match++;
+        }
+        count ++;
+    };
+
+    cout << (match * 1.0 / count) << endl;
 
     return 0;
 }
